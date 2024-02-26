@@ -5,6 +5,7 @@ clear
 close all
 
 % Stampa, nella console, il numero di nodi e archi presenti
+fprintf('<strong>NUMERO DI ARCHI E NODI TOTALI</strong>\n');
 network = '<strong>SCELTA DELLA GENERAZIONE DELLA RETE</strong>\n1. Statica\n2. Dinamica\nInserisci qui la scelta: ';
 network_choice = input(network);
 
@@ -12,28 +13,28 @@ switch(network_choice)
     case 1
         %##################################################################
         % GENERAZIONE STATICA DELLA RETE:
-        %
+
         % Fissa il seed del generatore di numeri casuali
             rng(1);
-        %
+
         % Genera una rete complessa di dimensione fissa
             n = 100;
             A = smallw(n, 3, 0.1);
-        %
+
         %##################################################################
     case 2
         %##################################################################
         % GENERAZIONE DINAMICA DELLA RETE:
-        %
+
         % Genera una rete complessa di dimensione casuale tra 10 e 200
         n = randi([10, 200]);
-        A = smallw(n, 3, 0.1);
-        %
-        %##################################################################
+A = smallw(n, 3, 0.1);
+
+%##########################################################################
 end
 
 % Stampa, nella console, il numero di nodi e archi presenti
-fprintf('\n\n\n<strong>NUMERO DI ARCHI E NODI TOTALI</strong>\n');
+fprintf('<strong>NUMERO DI ARCHI E NODI TOTALI</strong>\n');
 fprintf('Numero di nodi: %d\n', n);
 fprintf('Numero di archi: %d\n\n\n', nnz(A)/2);
 
@@ -71,6 +72,7 @@ switch choice
         name = 'Pagerank Centrality';
     case 6
         [i, centrality_values] = exp_sub_centr(A, m);
+        [j, cv2] = expm_centr(A, m, 2);
         name = 'Exponential Subgraph Centrality';
     case 7
         [i, centrality_values] = katz_centr(A, m);
@@ -115,3 +117,9 @@ fprintf('\n\n<strong>INDICI DEI NODI E VALORI DI CENTRALITA INDIVIDUATI</strong>
 disp(important_nodes');
 fprintf('Valori di centralità:\n');
 disp(centrality_values');
+
+% Stampa, nella console, gli indici dei nodi più importanti e il loro valore di centralità
+fprintf('\n\n<strong>INDICI DEI NODI E VALORI DI CENTRALITA INDIVIDUATI</strong>\nNodi importanti:\n');
+disp(j');
+fprintf('Valori di centralità:\n');
+disp(cv2');

@@ -25,21 +25,42 @@ function [i, val] = res_sub_centr(A, m)
     % Numero di nodi nel grafo
     n = size(A, 1);
 
+    % Vettore di n righe, necessario, per memorizzare le diverse centralità
+    % di Katz ottenute
+    x = ones(n, 1);
+    
+    % Calcolo dell'autovalore con massima magnitudine (o più grande)
+    lambda = eigs(A, 1, 'largestabs');
+
+    % Calcola il valore assoluto dell'autovalore precedente
+    rho = abs(lambda);
+
     % Scelta di alpha:
     % alpha < inv(max_eig), ma è preferibile utilizzare un valore , per 
     % alpha, statico che sia compreso tra 0 e 1/max_eig.
-    alpha = 0.1;
+    alpha = 0.9/rho;
 
-    % Calcolo della risolvente della matrice di adiacenza
-    % (I-alpha*A)^-1
-    resolvent = inv(eye(n) - alpha * A);
+    for i=1:n
+        % Genero il vettore e_i di n righe, necessario, per calcolare il sistema di
+        % Katz; questo, ad ogni iterazione, rappresenta l'i-esima colonna
+        % dell'Identità (I).
+        e_i = zeros(n, 1);
 
-    % Calcolo della centralità del sottografo risolvente
-    centr_res = sum(resolvent, 2);
+        % L'i-esimo elemento viene impostato a 1 ad ogni iterazione; si fa
+        % ciò per selezionare poi, successivamente, l'i-esimo nodo da
+        % valutare.
+        e_i(i) = 1;
+    
+        % Calcolo della risolvente della matrice di adiacenza
+        % (I - alpha * A)^-1 * e_i
+        y = inv(eye(n) - alpha * A) * e_i;
+        
+        x(i) = y(i);
+    end
 
     % Ordinamento dei nodi per centralità decrescente
-    [~, i] = sort(centr_res, 'descend');
+    [~, i] = sort(x, 'descend');
     i = i(1:m);
-    val = centr_res(i);
+    val = x(i);
 
 end

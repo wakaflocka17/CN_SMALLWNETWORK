@@ -22,14 +22,71 @@
 
 function [i, val] = exp_sub_centr(A, m)
 
-    % Calcolo della centralità esponenziale
-    % expm(A) è definita come la serie di Taylor:
-    % expm(A) = I * A * A^2/2! * [...] * A^n/n!
-    centr_exp = expm(A) * ones(size(A, 1), 1);
+    % Numero di nodi nel grafo
+    n = size(A, 1);
+
+    %Definisco la soglia per cui poi devo fermarmi
+    tol = 1e-5;
+
+    %Definisco il vettore gs che conterrà le centralità
+    gs = zeros(n,1);
+
+    for i=1:n
+
+        %Genero il vettore u che è ogni volta l'i-esima colonna della matrice
+        %identita
+        u = zeros(n,1); 
+        u(i)=1;
+
+        kmax = n; %Non posso andare oltre la dimensione della matrice che ho fissato
+        g = 0;
+        k = 0;
+    
+        %Definisco u di partenza
+        u0=zeros(n,1);
+        beta=0;
+    
+        U=u; %U inizia con u e basta
+    
+        flag = 1;
+    
+        while flag
+            k = k+1;
+            g0 =  g;
+            alpha = u' * A * u;
+            utilde = A * u - alpha * u - beta*u0;
+            beta = norm(utilde);
+            u0 = u;
+            if beta < 1e-10
+                warning('beta troppo piccolo!')
+            else
+                u = utilde/beta;
+            end
+    
+            J(k,k) = alpha;
+            J(k+1,k) = beta;
+            J(k,k+1) = beta;
+    
+            U = [U u];
+    
+            Jk = J(1:k,1:k);
+        
+            % CALCOLO DELL'ESPONENZIALE MATRICIALE
+            % expm(Jk) è definita come la serie di Taylor:
+            % expm(Jk) = I * Jk * Jk^2/2! * [...] * Jk^n/n!.
+            % Con l'esponenziale normale (exp(Jk)), invece, avremmo 
+            % ottenuto "l'esponenziale puntuale"
+            E = expm(Jk);  
+            g = E(1,1); 
+        
+            flag = abs(g-g0) > tol * abs(g) && k < kmax;  %&& beta > 1e-10; %Bisogna sempre fissare un numero massimo di iterazioni 
+        end
+    
+        gs(i)=g;
+    end
 
     % Ordinamento dei nodi per centralità decrescente
-    [~, i] = sort(centr_exp, 'descend');
+    [~, i] = sort(gs, 'descend');
     i = i(1:m);
-    val = centr_exp(i);
-
+    val = gs(i);
 end
