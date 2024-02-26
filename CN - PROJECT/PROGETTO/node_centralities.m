@@ -21,6 +21,7 @@ switch(network_choice)
             A = smallw(n, 3, 0.1);
         %
         %##################################################################
+    
     case 2
         %##################################################################
         % GENERAZIONE DINAMICA DELLA RETE:
@@ -30,10 +31,13 @@ switch(network_choice)
         A = smallw(n, 3, 0.1);
         %
         %##################################################################
+    
+    otherwise
+        error('<strong>SCELTA NON CORRETTA DELLA RETE</strong>: RIAVVIARE LO SCRIPT!');
 end
 
 % Stampa, nella console, il numero di nodi e archi presenti
-fprintf('\n\n\n<strong>NUMERO DI ARCHI E NODI TOTALI</strong>\n');
+fprintf('\n\n<strong>NUMERO DI ARCHI E NODI TOTALI</strong>\n');
 fprintf('Numero di nodi: %d\n', n);
 fprintf('Numero di archi: %d\n\n\n', nnz(A)/2);
 
@@ -78,6 +82,9 @@ switch choice
     case 8
         [i, centrality_values] = res_sub_centr(A, m);
         name = 'Resolvent Subgraph Centrality';
+
+    otherwise
+        error('<strong>SCELTA NON CORRETTA DELLA CENTRALITY</strong>: RIAVVIARE LO SCRIPT!');
 end
 
 % In questo caso per le funzioni built-in di matlab verrà eseguito
